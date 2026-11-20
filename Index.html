@@ -1,0 +1,1765 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f6f7">
+<title>Work Tracker</title>
+
+<style>
+:root {
+  --bg:#f5f6f7;
+  --card:#fff;
+  --text:#191b1f;
+  --muted:#858b94;
+  --border:#e9ebee;
+  --green:#16845d;
+  --green-bg:#eaf5ef;
+  --red:#d95b5b;
+  --red-bg:#faeeee;
+  --orange:#d58c35;
+  --orange-bg:#fff4e7;
+  --radius:17px;
+}
+
+* {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body {
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100dvh;
+  -webkit-tap-highlight-color:transparent;
+}
+
+button,input {
+  font:inherit;
+}
+
+button {
+  cursor:pointer;
+  transition:transform .15s,opacity .15s;
+}
+
+button:active {
+  transform:scale(.97);
+}
+
+.app {
+  width:100%;
+  max-width:720px;
+  min-height:100dvh;
+  margin:auto;
+  padding:18px 16px calc(95px + env(safe-area-inset-bottom));
+}
+
+/* HEADER */
+
+.header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:24px;
+}
+
+.logo {
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:-.6px;
+}
+
+.logo span {
+  color:var(--muted);
+  font-weight:400;
+}
+
+.header-right {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.icon-button {
+  border:1px solid var(--border);
+  background:white;
+  border-radius:11px;
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  font-size:16px;
+}
+
+.avatar {
+  width:40px;
+  height:40px;
+  background:#e9ecef;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-weight:700;
+}
+
+/* GREETING */
+
+.greeting {
+  font-size:27px;
+  font-weight:800;
+  letter-spacing:-.8px;
+}
+
+.date {
+  color:var(--muted);
+  font-size:13px;
+  margin-top:7px;
+  margin-bottom:22px;
+}
+
+/* CARD */
+
+.card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px;
+  margin-bottom:15px;
+}
+
+/* TARGET */
+
+.target-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.small-label {
+  font-size:12px;
+  color:var(--muted);
+}
+
+.target-number {
+  font-size:26px;
+  font-weight:800;
+  margin-top:5px;
+}
+
+.target-number span {
+  color:var(--muted);
+  font-size:13px;
+  font-weight:400;
+}
+
+.outline-btn {
+  border:1px solid var(--border);
+  background:white;
+  padding:9px 12px;
+  border-radius:10px;
+  font-size:12px;
+}
+
+.progress-track {
+  height:8px;
+  background:#eff1f3;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:18px;
+}
+
+.progress-fill {
+  width:0;
+  height:100%;
+  background:var(--green);
+  border-radius:20px;
+  transition:width .3s;
+}
+
+.progress-footer {
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:9px;
+}
+
+/* STATS */
+
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.stat {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:15px 12px;
+}
+
+.stat-label {
+  font-size:12px;
+  color:var(--muted);
+}
+
+.stat-value {
+  font-size:27px;
+  font-weight:800;
+  margin-top:7px;
+}
+
+.stat.ok .stat-value { color:var(--green); }
+.stat.bad .stat-value { color:var(--red); }
+.stat.repolish .stat-value { color:var(--orange); }
+
+/* ACTIONS */
+
+.section-heading {
+  font-size:15px;
+  font-weight:750;
+  margin-bottom:12px;
+}
+
+.actions {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:22px;
+}
+
+.action {
+  border:none;
+  border-radius:13px;
+  padding:17px 8px;
+  font-size:13px;
+  font-weight:750;
+}
+
+.action.ok {
+  color:var(--green);
+  background:var(--green-bg);
+}
+
+.action.bad {
+  color:var(--red);
+  background:var(--red-bg);
+}
+
+.action.repolish {
+  color:var(--orange);
+  background:var(--orange-bg);
+}
+
+/* SESSION */
+
+.session-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.status {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.dot {
+  width:8px;
+  height:8px;
+  background:#c6cbd0;
+  border-radius:50%;
+}
+
+.dot.active { background:var(--green); }
+.dot.break { background:var(--orange); }
+
+.timer {
+  font-size:30px;
+  font-weight:800;
+  letter-spacing:-1px;
+}
+
+.timer-caption {
+  color:var(--muted);
+  font-size:12px;
+  margin-top:5px;
+}
+
+.session-buttons {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:18px;
+}
+
+.session-btn {
+  border:1px solid var(--border);
+  background:white;
+  border-radius:11px;
+  padding:13px;
+  font-size:13px;
+  font-weight:700;
+}
+
+.session-btn.primary {
+  background:#191b1f;
+  color:white;
+  border-color:#191b1f;
+}
+
+.session-btn:disabled {
+  opacity:.4;
+}
+
+.time-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--border);
+  margin-top:18px;
+  padding-top:15px;
+}
+
+.time-cell {
+  text-align:center;
+}
+
+.time-cell strong {
+  display:block;
+  font-size:16px;
+}
+
+.time-cell span {
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:5px;
+}
+
+/* ACTIVITY */
+
+.activity-card {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  margin-bottom:15px;
+}
+
+.activity-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:17px;
+  border-bottom:1px solid var(--border);
+}
+
+.activity-header h3 {
+  font-size:14px;
+}
+
+.activity-header span {
+  font-size:12px;
+  color:var(--muted);
+}
+
+.activity-list {
+  padding:0 16px;
+}
+
+.entry {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 0;
+  border-bottom:1px solid #f0f1f2;
+}
+
+.entry:last-child {
+  border-bottom:none;
+}
+
+.entry-dot {
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+
+.entry-dot.ok { background:var(--green); }
+.entry-dot.bad { background:var(--red); }
+.entry-dot.repolish { background:var(--orange); }
+
+.entry-info {
+  flex:1;
+  min-width:0;
+}
+
+.entry-name {
+  font-size:13px;
+  font-weight:700;
+}
+
+.entry-time {
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+}
+
+.delete-btn {
+  border:0;
+  background:transparent;
+  color:#b4b8bd;
+  font-size:21px;
+  padding:5px 9px;
+}
+
+.empty {
+  text-align:center;
+  padding:28px 10px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+/* UNDO */
+
+.undo-row {
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:15px;
+}
+
+.undo-btn {
+  border:1px solid var(--border);
+  background:white;
+  color:var(--muted);
+  border-radius:9px;
+  padding:8px 12px;
+  font-size:12px;
+}
+
+/* PAGES */
+
+.page {
+  display:none;
+}
+
+.page.active {
+  display:block;
+}
+
+.page-title {
+  font-size:24px;
+  font-weight:800;
+  letter-spacing:-.6px;
+  margin-bottom:6px;
+}
+
+.page-description {
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:20px;
+}
+
+/* HISTORY */
+
+.date-picker {
+  width:100%;
+  border:1px solid var(--border);
+  background:white;
+  border-radius:12px;
+  padding:13px;
+  margin-bottom:15px;
+}
+
+.history-card {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  margin-bottom:14px;
+}
+
+.history-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px;
+}
+
+.history-header strong {
+  font-size:14px;
+}
+
+.history-header span {
+  color:var(--muted);
+  font-size:12px;
+}
+
+.history-stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--border);
+}
+
+.history-stat {
+  text-align:center;
+  padding:14px 5px;
+}
+
+.history-stat strong {
+  display:block;
+  font-size:19px;
+}
+
+.history-stat span {
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+  display:block;
+}
+
+.history-stat:nth-child(1) strong { color:var(--green); }
+.history-stat:nth-child(2) strong { color:var(--red); }
+.history-stat:nth-child(3) strong { color:var(--orange); }
+
+/* REPORT */
+
+.report-tabs {
+  display:flex;
+  gap:8px;
+  overflow:auto;
+  margin-bottom:16px;
+  padding-bottom:3px;
+}
+
+.report-tab {
+  flex-shrink:0;
+  border:1px solid var(--border);
+  background:white;
+  border-radius:9px;
+  padding:9px 13px;
+  font-size:12px;
+}
+
+.report-tab.active {
+  background:#191b1f;
+  color:white;
+  border-color:#191b1f;
+}
+
+.report-grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.report-box {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:17px;
+}
+
+.report-box span {
+  color:var(--muted);
+  font-size:12px;
+}
+
+.report-box strong {
+  display:block;
+  font-size:25px;
+  margin-top:7px;
+}
+
+.report-card {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:17px;
+  margin-bottom:15px;
+}
+
+.report-row {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+
+.report-row:last-child {
+  border-bottom:0;
+}
+
+.report-day {
+  padding:13px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.report-day:last-child {
+  border-bottom:0;
+}
+
+.report-day strong {
+  display:block;
+  font-size:13px;
+}
+
+.report-day span {
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:5px;
+}
+
+/* BOTTOM NAV */
+
+.bottom-nav {
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  z-index:20;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(15px);
+  border-top:1px solid var(--border);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+
+.nav-inner {
+  max-width:720px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  padding:8px 12px;
+}
+
+.nav-btn {
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  padding:10px 5px;
+  font-size:12px;
+  font-weight:650;
+}
+
+.nav-btn.active {
+  color:#191b1f;
+}
+
+/* MODAL */
+
+.modal {
+  position:fixed;
+  inset:0;
+  z-index:50;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  background:rgba(0,0,0,.35);
+}
+
+.modal.show {
+  display:flex;
+}
+
+.modal-content {
+  width:100%;
+  max-width:360px;
+  background:white;
+  border-radius:18px;
+  padding:22px;
+}
+
+.modal-content h3 {
+  font-size:18px;
+}
+
+.modal-content p {
+  font-size:12px;
+  color:var(--muted);
+  margin:8px 0 18px;
+}
+
+.modal-content input {
+  width:100%;
+  border:1px solid var(--border);
+  padding:14px;
+  border-radius:10px;
+  outline:none;
+  font-size:16px;
+}
+
+.modal-actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:15px;
+}
+
+.modal-actions button {
+  border:1px solid var(--border);
+  background:white;
+  padding:12px;
+  border-radius:10px;
+}
+
+.modal-actions button:last-child {
+  background:#191b1f;
+  color:white;
+}
+
+/* SETUP */
+
+.setup {
+  position:fixed;
+  inset:0;
+  background:var(--bg);
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+.setup.show {
+  display:flex;
+}
+
+.setup-inner {
+  width:100%;
+  max-width:400px;
+}
+
+.setup-inner h1 {
+  font-size:32px;
+  margin-bottom:10px;
+  letter-spacing:-1px;
+}
+
+.setup-inner p {
+  font-size:14px;
+  color:var(--muted);
+  line-height:1.6;
+  margin-bottom:24px;
+}
+
+.setup-inner input {
+  width:100%;
+  padding:15px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:white;
+  outline:none;
+  font-size:16px;
+}
+
+.setup-inner button {
+  width:100%;
+  border:none;
+  background:#191b1f;
+  color:white;
+  border-radius:12px;
+  padding:15px;
+  margin-top:12px;
+  font-weight:700;
+}
+
+/* TOAST */
+
+.toast {
+  position:fixed;
+  left:50%;
+  bottom:calc(90px + env(safe-area-inset-bottom));
+  transform:translate(-50%,15px);
+  opacity:0;
+  pointer-events:none;
+  background:#191b1f;
+  color:white;
+  padding:12px 16px;
+  border-radius:10px;
+  font-size:12px;
+  z-index:100;
+  transition:.2s;
+  white-space:nowrap;
+}
+
+.toast.show {
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+/* FULLSCREEN */
+
+body.fullscreen .app {
+  max-width:100%;
+  padding-left:max(20px,env(safe-area-inset-left));
+  padding-right:max(20px,env(safe-area-inset-right));
+}
+
+@media (max-width:380px) {
+  .app {
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .greeting {
+    font-size:23px;
+  }
+
+  .stat {
+    padding:13px 9px;
+  }
+
+  .stat-value {
+    font-size:24px;
+  }
+
+  .action {
+    font-size:12px;
+    padding:15px 5px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SETUP -->
+<div class="setup" id="setup">
+  <div class="setup-inner">
+    <h1>Work Tracker</h1>
+    <p>Track your daily production, work time and progress in one simple place.</p>
+    <input id="nameInput" placeholder="Your name" maxlength="30">
+    <button id="saveName">Get Started</button>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">Work<span>Tracker</span></div>
+
+    <div class="header-right">
+      <button class="icon-button" id="fullscreenBtn" title="Fullscreen">⛶</button>
+      <div class="avatar" id="avatar">U</div>
+    </div>
+  </header>
+
+  <!-- TODAY -->
+  <section class="page active" id="todayPage">
+
+    <h1 class="greeting" id="greeting">Good morning</h1>
+    <div class="date" id="todayDate"></div>
+
+    <!-- TARGET -->
+    <div class="card">
+      <div class="target-header">
+        <div>
+          <div class="small-label">Daily target</div>
+          <div class="target-number">
+            <b id="totalCount">0</b>
+            <span>/ <span id="targetValue">100</span> items</span>
+          </div>
+        </div>
+        <button class="outline-btn" id="editTarget">Edit target</button>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="progress"></div>
+      </div>
+
+      <div class="progress-footer">
+        <span id="percent">0% completed</span>
+        <span id="remaining">100 remaining</span>
+      </div>
+    </div>
+
+    <!-- COUNTS -->
+    <div class="stats">
+      <div class="stat ok">
+        <div class="stat-label">OK</div>
+        <div class="stat-value" id="okCount">0</div>
+      </div>
+
+      <div class="stat bad">
+        <div class="stat-label">Not OK</div>
+        <div class="stat-value" id="badCount">0</div>
+      </div>
+
+      <div class="stat repolish">
+        <div class="stat-label">Repolish</div>
+        <div class="stat-value" id="repolishCount">0</div>
+      </div>
+    </div>
+
+    <!-- ADD WORK -->
+    <div class="section-heading">Add work</div>
+
+    <div class="actions">
+      <button class="action ok" data-type="OK">+ OK</button>
+      <button class="action bad" data-type="NOT OK">+ NOT OK</button>
+      <button class="action repolish" data-type="REPOLISH">+ REPOLISH</button>
+    </div>
+
+    <!-- WORK SESSION -->
+    <div class="card">
+      <div class="session-header">
+        <div class="section-heading" style="margin:0">Work session</div>
+        <div class="status">
+          <span class="dot" id="sessionDot"></span>
+          <span id="sessionStatus">Not started</span>
+        </div>
+      </div>
+
+      <div class="timer" id="sessionTimer">00:00:00</div>
+      <div class="timer-caption" id="sessionCaption">Start your work session</div>
+
+      <div class="session-buttons">
+        <button class="session-btn primary" id="workBtn">Start work</button>
+        <button class="session-btn" id="breakBtn" disabled>Start break</button>
+      </div>
+
+      <div class="time-grid">
+        <div class="time-cell">
+          <strong id="workTime">0m</strong>
+          <span>Work time</span>
+        </div>
+        <div class="time-cell">
+          <strong id="breakTime">0m</strong>
+          <span>Break time</span>
+        </div>
+        <div class="time-cell">
+          <strong id="netTime">0m</strong>
+          <span>Net time</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVITY -->
+    <div class="activity-card">
+      <div class="activity-header">
+        <h3>Today's activity</h3>
+        <span id="activityCount">0 entries</span>
+      </div>
+      <div class="activity-list" id="activityList"></div>
+    </div>
+
+    <div class="undo-row">
+      <button class="undo-btn" id="undoBtn">Undo last entry</button>
+    </div>
+
+  </section>
+
+  <!-- HISTORY -->
+  <section class="page" id="historyPage">
+    <h1 class="page-title">History</h1>
+    <p class="page-description">Review your daily work records.</p>
+
+    <input type="date" class="date-picker" id="historyDate">
+
+    <div id="historyContent"></div>
+  </section>
+
+  <!-- REPORTS -->
+  <section class="page" id="reportsPage">
+    <h1 class="page-title">Reports</h1>
+    <p class="page-description">Your work performance summary.</p>
+
+    <div class="report-tabs">
+      <button class="report-tab active" data-range="today">Today</button>
+      <button class="report-tab" data-range="7days">7 Days</button>
+      <button class="report-tab" data-range="week">This Week</button>
+      <button class="report-tab" data-range="30days">30 Days</button>
+      <button class="report-tab" data-range="month">This Month</button>
+    </div>
+
+    <div id="reportContent"></div>
+  </section>
+
+</div>
+
+<!-- NAVIGATION -->
+<div class="bottom-nav">
+  <div class="nav-inner">
+    <button class="nav-btn active" data-page="todayPage">Today</button>
+    <button class="nav-btn" data-page="historyPage">History</button>
+    <button class="nav-btn" data-page="reportsPage">Reports</button>
+  </div>
+</div>
+
+<!-- TARGET MODAL -->
+<div class="modal" id="targetModal">
+  <div class="modal-content">
+    <h3>Daily target</h3>
+    <p>Set your total daily production target.</p>
+    <input type="number" id="targetInput" min="1">
+    <div class="modal-actions">
+      <button id="cancelTarget">Cancel</button>
+      <button id="saveTarget">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==============================
+   STORAGE
+================================ */
+
+const KEY = "workTracker_fullscreen_v2";
+
+let data;
+
+try {
+  data = JSON.parse(localStorage.getItem(KEY));
+} catch {
+  data = null;
+}
+
+if (!data) {
+  data = {
+    name:"",
+    target:100,
+    entries:[],
+    sessions:[]
+  };
+}
+
+data.entries ||= [];
+data.sessions ||= [];
+data.target ||= 100;
+
+let reportRange = "today";
+let toastTimeout;
+
+/* ==============================
+   HELPERS
+================================ */
+
+const $ = id => document.getElementById(id);
+
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(data));
+}
+
+function dateKey(date = new Date()) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth()+1).padStart(2,"0"),
+    String(date.getDate()).padStart(2,"0")
+  ].join("-");
+}
+
+function today() {
+  return dateKey();
+}
+
+function dateText(date) {
+  return date.toLocaleDateString(undefined,{
+    weekday:"long",
+    year:"numeric",
+    month:"long",
+    day:"numeric"
+  });
+}
+
+function shortDate(key) {
+  return new Date(key+"T12:00:00").toLocaleDateString(undefined,{
+    day:"numeric",
+    month:"short",
+    year:"numeric"
+  });
+}
+
+function timeText(timestamp) {
+  return new Date(timestamp).toLocaleTimeString([],{
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit"
+  });
+}
+
+function duration(ms) {
+  ms = Math.max(0,ms || 0);
+
+  let seconds = Math.floor(ms/1000);
+  let hours = Math.floor(seconds/3600);
+  let minutes = Math.floor((seconds%3600)/60);
+  seconds %= 60;
+
+  return [
+    String(hours).padStart(2,"0"),
+    String(minutes).padStart(2,"0"),
+    String(seconds).padStart(2,"0")
+  ].join(":");
+}
+
+function minutesText(ms) {
+  const minutes = Math.floor(Math.max(0,ms)/60000);
+  const hours = Math.floor(minutes/60);
+  const remaining = minutes%60;
+
+  return hours ? `${hours}h ${remaining}m` : `${remaining}m`;
+}
+
+function startOfDay(date) {
+  return new Date(date.getFullYear(),date.getMonth(),date.getDate());
+}
+
+function showToast(message) {
+  $("toast").textContent = message;
+  $("toast").classList.add("show");
+
+  clearTimeout(toastTimeout);
+
+  toastTimeout = setTimeout(()=>{
+    $("toast").classList.remove("show");
+  },2200);
+}
+
+/* ==============================
+   SETUP
+================================ */
+
+function init() {
+  if (!data.name) {
+    $("setup").classList.add("show");
+  } else {
+    renderGreeting();
+    renderAll();
+  }
+}
+
+function saveName() {
+  const name = $("nameInput").value.trim();
+
+  if (!name) {
+    showToast("Enter your name");
+    return;
+  }
+
+  data.name = name;
+  save();
+
+  $("setup").classList.remove("show");
+
+  renderGreeting();
+  renderAll();
+}
+
+$("saveName").onclick = saveName;
+
+$("nameInput").addEventListener("keydown",e=>{
+  if(e.key === "Enter") saveName();
+});
+
+function renderGreeting() {
+  const hour = new Date().getHours();
+
+  let greeting = "Good morning";
+
+  if(hour >= 12 && hour < 17) greeting = "Good afternoon";
+  if(hour >= 17) greeting = "Good evening";
+
+  $("greeting").textContent = `${greeting}, ${data.name}`;
+  $("avatar").textContent = data.name.charAt(0).toUpperCase();
+  $("todayDate").textContent = dateText(new Date());
+}
+
+/* ==============================
+   ENTRIES
+================================ */
+
+function todayEntries() {
+  return data.entries.filter(e => e.date === today());
+}
+
+function counts(entries) {
+  return {
+    OK:entries.filter(e=>e.type==="OK").length,
+    "NOT OK":entries.filter(e=>e.type==="NOT OK").length,
+    REPOLISH:entries.filter(e=>e.type==="REPOLISH").length
+  };
+}
+
+function addEntry(type) {
+  data.entries.push({
+    id:Date.now()+Math.random(),
+    type,
+    date:today(),
+    time:Date.now()
+  });
+
+  save();
+  renderAll();
+  showToast(type+" added");
+}
+
+document.querySelectorAll(".action").forEach(button=>{
+  button.onclick = ()=>addEntry(button.dataset.type);
+});
+
+/* ==============================
+   TARGET
+================================ */
+
+$("editTarget").onclick = ()=>{
+  $("targetInput").value = data.target;
+  $("targetModal").classList.add("show");
+};
+
+$("cancelTarget").onclick = ()=>{
+  $("targetModal").classList.remove("show");
+};
+
+$("saveTarget").onclick = ()=>{
+  const value = Number($("targetInput").value);
+
+  if(!value || value < 1){
+    showToast("Enter a valid target");
+    return;
+  }
+
+  data.target = value;
+  save();
+  renderTarget();
+
+  $("targetModal").classList.remove("show");
+  showToast("Target updated");
+};
+
+$("targetModal").onclick = e=>{
+  if(e.target === $("targetModal")){
+    $("targetModal").classList.remove("show");
+  }
+};
+
+function renderTarget() {
+  const c = counts(todayEntries());
+
+  // All types count toward the target.
+  const total = c.OK + c["NOT OK"] + c.REPOLISH;
+
+  const percent = Math.min(
+    100,
+    Math.round(total/data.target*100)
+  );
+
+  $("totalCount").textContent = total;
+  $("targetValue").textContent = data.target;
+
+  $("progress").style.width = percent+"%";
+  $("percent").textContent = percent+"% completed";
+
+  const remaining = Math.max(0,data.target-total);
+
+  $("remaining").textContent = remaining
+    ? remaining+" remaining"
+    : "Target completed";
+
+  $("okCount").textContent = c.OK;
+  $("badCount").textContent = c["NOT OK"];
+  $("repolishCount").textContent = c.REPOLISH;
+}
+
+/* ==============================
+   ACTIVITY
+================================ */
+
+function typeClass(type) {
+  if(type==="OK") return "ok";
+  if(type==="NOT OK") return "bad";
+  return "repolish";
+}
+
+function renderActivity() {
+  const entries = todayEntries().sort((a,b)=>b.time-a.time);
+
+  $("activityCount").textContent = entries.length+" entries";
+
+  if(!entries.length){
+    $("activityList").innerHTML = `
+      <div class="empty">
+        No activity yet.<br>Add your first entry.
+      </div>
+    `;
+    return;
+  }
+
+  $("activityList").innerHTML = entries.map(e=>`
+    <div class="entry">
+      <div class="entry-dot ${typeClass(e.type)}"></div>
+      <div class="entry-info">
+        <div class="entry-name">${e.type}</div>
+        <div class="entry-time">${timeText(e.time)} · ${shortDate(e.date)}</div>
+      </div>
+      <button class="delete-btn" data-delete="${e.id}">×</button>
+    </div>
+  `).join("");
+}
+
+$("activityList").onclick = e=>{
+  const btn = e.target.closest("[data-delete]");
+  if(!btn) return;
+
+  const id = Number(btn.dataset.delete);
+
+  data.entries = data.entries.filter(entry=>entry.id!==id);
+
+  save();
+  renderAll();
+  showToast("Entry deleted");
+};
+
+$("undoBtn").onclick = ()=>{
+  const entries = todayEntries().sort((a,b)=>b.time-a.time);
+
+  if(!entries.length){
+    showToast("Nothing to undo");
+    return;
+  }
+
+  const latest = entries[0];
+
+  data.entries = data.entries.filter(e=>e.id!==latest.id);
+
+  save();
+  renderAll();
+  showToast("Last entry undone");
+};
+
+/* ==============================
+   WORK SESSION
+================================ */
+
+function activeSession() {
+  return data.sessions.find(s=>!s.end);
+}
+
+function activeBreak(session) {
+  if(!session) return null;
+  return session.breaks.find(b=>!b.end);
+}
+
+function startWork() {
+  if(activeSession()){
+    showToast("Session already active");
+    return;
+  }
+
+  data.sessions.push({
+    id:Date.now(),
+    date:today(),
+    start:Date.now(),
+    end:null,
+    breaks:[]
+  });
+
+  save();
+  renderSession();
+  showToast("Work started");
+}
+
+function endWork() {
+  const session = activeSession();
+  if(!session) return;
+
+  const breakItem = activeBreak(session);
+
+  if(breakItem) breakItem.end = Date.now();
+
+  session.end = Date.now();
+
+  save();
+  renderSession();
+  showToast("Work session ended");
+}
+
+function toggleBreak() {
+  const session = activeSession();
+
+  if(!session){
+    showToast("Start work first");
+    return;
+  }
+
+  const b = activeBreak(session);
+
+  if(b){
+    b.end = Date.now();
+    showToast("Break ended");
+  } else {
+    session.breaks.push({
+      start:Date.now(),
+      end:null
+    });
+    showToast("Break started");
+  }
+
+  save();
+  renderSession();
+}
+
+$("workBtn").onclick = ()=>{
+  activeSession() ? endWork() : startWork();
+};
+
+$("breakBtn").onclick = toggleBreak;
+
+function elapsed(session,now=Date.now()) {
+  return Math.max(0,(session.end||now)-session.start);
+}
+
+function breakMs(session,now=Date.now()) {
+  return session.breaks.reduce((sum,b)=>{
+    return sum+Math.max(0,(b.end||now)-b.start);
+  },0);
+}
+
+function workMs(session,now=Date.now()) {
+  return Math.max(0,elapsed(session,now)-breakMs(session,now));
+}
+
+function todaySessions() {
+  return data.sessions.filter(s=>s.date===today());
+}
+
+function renderSession() {
+  const session = activeSession();
+  const currentBreak = activeBreak(session);
+
+  if(session){
+    $("sessionDot").className = "dot "+(currentBreak?"break":"active");
+    $("sessionStatus").textContent = currentBreak?"On break":"Working";
+    $("sessionCaption").textContent = "Started at "+timeText(session.start);
+    $("sessionTimer").textContent = duration(elapsed(session));
+
+    $("workBtn").textContent = "End work";
+    $("breakBtn").disabled = false;
+    $("breakBtn").textContent = currentBreak?"End break":"Start break";
+  } else {
+    $("sessionDot").className = "dot";
+    $("sessionStatus").textContent = "Not started";
+    $("sessionCaption").textContent = "Start your work session";
+    $("sessionTimer").textContent = "00:00:00";
+
+    $("workBtn").textContent = "Start work";
+    $("breakBtn").disabled = true;
+    $("breakBtn").textContent = "Start break";
+  }
+
+  const sessions = todaySessions();
+
+  const work = sessions.reduce((sum,s)=>sum+workMs(s),0);
+  const breaks = sessions.reduce((sum,s)=>sum+breakMs(s),0);
+
+  $("workTime").textContent = minutesText(work);
+  $("breakTime").textContent = minutesText(breaks);
+  $("netTime").textContent = minutesText(work);
+}
+
+/* ==============================
+   HISTORY
+================================ */
+
+$("historyDate").value = today();
+$("historyDate").onchange = renderHistory;
+
+function renderHistory() {
+  const key = $("historyDate").value;
+  if(!key) return;
+
+  const entries = data.entries
+    .filter(e=>e.date===key)
+    .sort((a,b)=>b.time-a.time);
+
+  const c = counts(entries);
+  const total = c.OK+c["NOT OK"]+c.REPOLISH;
+
+  const sessions = data.sessions.filter(s=>s.date===key);
+
+  const work = sessions.reduce((sum,s)=>sum+workMs(s),0);
+  const breaks = sessions.reduce((sum,s)=>sum+breakMs(s),0);
+
+  $("historyContent").innerHTML = `
+    <div class="history-card">
+      <div class="history-header">
+        <strong>${shortDate(key)}</strong>
+        <span>${total} processed</span>
+      </div>
+
+      <div class="history-stats">
+        <div class="history-stat">
+          <strong>${c.OK}</strong>
+          <span>OK</span>
+        </div>
+        <div class="history-stat">
+          <strong>${c["NOT OK"]}</strong>
+          <span>NOT OK</span>
+        </div>
+        <div class="history-stat">
+          <strong>${c.REPOLISH}</strong>
+          <span>REPOLISH</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="history-card">
+      <div class="history-header">
+        <strong>Time summary</strong>
+      </div>
+
+      <div class="history-stats">
+        <div class="history-stat">
+          <strong>${minutesText(work)}</strong>
+          <span>Work</span>
+        </div>
+        <div class="history-stat">
+          <strong>${minutesText(breaks)}</strong>
+          <span>Break</span>
+        </div>
+        <div class="history-stat">
+          <strong>${minutesText(work)}</strong>
+          <span>Net</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="activity-card">
+      <div class="activity-header">
+        <h3>Entries</h3>
+        <span>${entries.length}</span>
+      </div>
+
+      <div class="activity-list">
+        ${entries.length ? entries.map(e=>`
+          <div class="entry">
+            <div class="entry-dot ${typeClass(e.type)}"></div>
+            <div class="entry-info">
+              <div class="entry-name">${e.type}</div>
+              <div class="entry-time">${timeText(e.time)}</div>
+            </div>
+          </div>
+        `).join("") : `
+          <div class="empty">No records for this day.</div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+/* ==============================
+   REPORTS
+================================ */
+
+document.querySelectorAll(".report-tab").forEach(button=>{
+  button.onclick = ()=>{
+    document.querySelectorAll(".report-tab").forEach(b=>b.classList.remove("active"));
+    button.classList.add("active");
+
+    reportRange = button.dataset.range;
+    renderReports();
+  };
+});
+
+function reportDates(range) {
+  const now = new Date();
+  const todayDate = new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  let start = new Date(todayDate);
+
+  if(range==="7days"){
+    start.setDate(start.getDate()-6);
+  }
+
+  if(range==="week"){
+    const offset = (todayDate.getDay()+6)%7;
+    start.setDate(start.getDate()-offset);
+  }
+
+  if(range==="30days"){
+    start.setDate(start.getDate()-29);
+  }
+
+  if(range==="month"){
+    start = new Date(todayDate.getFullYear(),todayDate.getMonth(),1);
+  }
+
+  return {
+    start:dateKey(start),
+    end:dateKey(todayDate)
+  };
+}
+
+function renderReports() {
+  const {start,end} = reportDates(reportRange);
+
+  const entries = data.entries.filter(e=>e.date>=start && e.date<=end);
+  const c = counts(entries);
+  const total = c.OK+c["NOT OK"]+c.REPOLISH;
+
+  const sessions = data.sessions.filter(s=>s.date>=start && s.date<=end);
+
+  const work = sessions.reduce((sum,s)=>sum+workMs(s),0);
+  const breaks = sessions.reduce((sum,s)=>sum+breakMs(s),0);
+
+  const days = {};
+
+  entries.forEach(e=>{
+    if(!days[e.date]){
+      days[e.date] = {OK:0,"NOT OK":0,REPOLISH:0,total:0};
+    }
+
+    days[e.date][e.type]++;
+    days[e.date].total++;
+  });
+
+  const sortedDays = Object.keys(days).sort().reverse();
+
+  $("reportContent").innerHTML = `
+    <div class="report-grid">
+      <div class="report-box">
+        <span>Total processed</span>
+        <strong>${total}</strong>
+      </div>
+      <div class="report-box">
+        <span>Days with activity</span>
+        <strong>${sortedDays.length}</strong>
+      </div>
+      <div class="report-box">
+        <span>Work time</span>
+        <strong>${minutesText(work)}</strong>
+      </div>
+      <div class="report-box">
+        <span>Break time</span>
+        <strong>${minutesText(breaks)}</strong>
+      </div>
+    </div>
+
+    <div class="report-card">
+      <div class="section-heading">Work breakdown</div>
+
+      <div class="report-row">
+        <span>OK</span>
+        <strong>${c.OK}</strong>
+      </div>
+
+      <div class="report-row">
+        <span>NOT OK</span>
+        <strong>${c["NOT OK"]}</strong>
+      </div>
+
+      <div class="report-row">
+        <span>REPOLISH</span>
+        <strong>${c.REPOLISH}</strong>
+      </div>
+
+      <div class="report-row">
+        <span>Total processed</span>
+        <strong>${total}</strong>
+      </div>
+    </div>
+
+    <div class="report-card">
+      <div class="section-heading">Daily activity</div>
+
+      ${sortedDays.length ? sortedDays.map(date=>`
+        <div class="report-day">
+          <strong>${shortDate(date)}</strong>
+          <span>
+            OK ${days[date].OK}
+            · NOT OK ${days[date]["NOT OK"]}
+            · REPOLISH ${days[date].REPOLISH}
+            · Total ${days[date].total}
+          </span>
+        </div>
+      `).join("") : `
+        <div class="empty">No activity in this period.</div>
+      `}
+    </div>
+  `;
+}
+
+/* ==============================
+   NAVIGATION
+================================ */
+
+document.querySelectorAll(".nav-btn").forEach(button=>{
+  button.onclick = ()=>{
+    const page = button.dataset.page;
+
+    document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+    button.classList.add("active");
+
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    $(page).classList.add("active");
+
+    if(page==="historyPage") renderHistory();
+    if(page==="reportsPage") renderReports();
+  };
+});
+
+/* ==============================
+   FULLSCREEN
+================================ */
+
+$("fullscreenBtn").onclick = async ()=>{
+  try {
+    if(!document.fullscreenElement){
+      await document.documentElement.requestFullscreen();
+      document.body.classList.add("fullscreen");
+    } else {
+      await document.exitFullscreen();
+      document.body.classList.remove("fullscreen");
+    }
+  } catch {
+    showToast("Fullscreen is not supported here");
+  }
+};
+
+document.addEventListener("fullscreenchange",()=>{
+  document.body.classList.toggle("fullscreen",!!document.fullscreenElement);
+});
+
+/* ==============================
+   RENDER
+================================ */
+
+function renderAll() {
+  renderTarget();
+  renderActivity();
+  renderSession();
+  renderHistory();
+  renderReports();
+}
+
+/* LIVE TIMER */
+
+setInterval(()=>{
+  if(activeSession()){
+    renderSession();
+  }
+},1000);
+
+/* START */
+
+init();
+</script>
+
+</body>
+</html>
